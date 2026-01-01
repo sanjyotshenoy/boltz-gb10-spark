@@ -1,17 +1,6 @@
-<div align="center">
-  <div>&nbsp;</div>
-  <img src="docs/boltz2_title.png" width="300"/>
-  <img src="https://model-gateway.boltz.bio/a.png?x-pxid=bce1627f-f326-4bff-8a97-45c6c3bc929d" />
-
-[Boltz-1](https://doi.org/10.1101/2024.11.19.624167) | [Boltz-2](https://doi.org/10.1101/2025.06.14.659707) |
-[Slack](https://boltz.bio/join-slack) <br> <br>
-</div>
-
-
-
 ![](docs/boltz1_pred_figure.png)
 
-
+# NVIDIA DGX Spark/GB10-compatible Boltz
 ## Introduction
 
 Boltz is a family of models for biomolecular interaction prediction. The following fork of Boltz-2 along with set of instructions would enable you to run Boltz2 on NVIDIA's latest GB10 Architecture based DGX Spark. These set of instructions should allow you to run Boltz2 on DGX Spark as of January 1, 2026.
