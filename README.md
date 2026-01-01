@@ -21,7 +21,7 @@ As support for GB10-based architectures increases, these instructions may get ou
 
 ```
 git clone https://github.com/sanjyotshenoy/boltz-gb10-spark.git
-cd boltz; chmod +x install.sh; ./install.sh
+cd boltz-gb10-spark; chmod +x install.sh; ./install.sh
 ```
 
 The install script should help install the dependcies which will take care of the errors plaguing the normal installation and standard dependencies of boltz.
