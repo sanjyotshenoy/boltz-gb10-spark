@@ -1,7 +1,7 @@
 <div style="text-align: center;">
 
 # NVIDIA DGX Spark/GB10-compatible Boltz
-
+![](docs/boltz1_pred_figure.png)
 </div>
 
 ## Introduction
