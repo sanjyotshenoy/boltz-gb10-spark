@@ -1,10 +1,9 @@
+<h1 align="center">NVIDIA DGX Spark/GB10-compatible Fork of Boltz</h1>
 <div style="text-align: center;">
-
-# NVIDIA DGX Spark/GB10-compatible Boltz
 ![](docs/boltz1_pred_figure.png)
 </div>
 
-## Introduction
+## Purpose of this Fork
 
 Boltz is a family of models for biomolecular interaction prediction. The following fork of Boltz-2 along with set of instructions would enable you to run Boltz2 on NVIDIA's latest GB10 Architecture based DGX Spark. These set of instructions should allow you to run Boltz2 on DGX Spark as of January 1, 2026.
 
