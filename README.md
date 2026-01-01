@@ -14,28 +14,63 @@
 
 ## Introduction
 
-Boltz is a family of models for biomolecular interaction prediction. Boltz-1 was the first fully open source model to approach AlphaFold3 accuracy. Our latest work Boltz-2 is a new biomolecular foundation model that goes beyond AlphaFold3 and Boltz-1 by jointly modeling complex structures and binding affinities, a critical component towards accurate molecular design. Boltz-2 is the first deep learning model to approach the accuracy of physics-based free-energy perturbation (FEP) methods, while running 1000x faster — making accurate in silico screening practical for early-stage drug discovery.
+Boltz is a family of models for biomolecular interaction prediction. The following fork of Boltz-2 along with set of instructions would enable you to run Boltz2 on NVIDIA's latest GB10 Architecture based DGX Spark. These set of instructions should allow you to run Boltz2 on DGX Spark as of January 1, 2026.
 
-All the code and weights are provided under MIT license, making them freely available for both academic and commercial uses. For more information about the model, see the [Boltz-1](https://doi.org/10.1101/2024.11.19.624167) and [Boltz-2](https://doi.org/10.1101/2025.06.14.659707) technical reports. To discuss updates, tools and applications join our [Slack channel](https://boltz.bio/join-slack).
+As support for GB10-based architectures increases, these instructions may get outdated, I will update the README in case of such breaking changes.
+
+## Pre-requisites
+
+- Familiarity with Python Environments
+- Updated DGX Spark with CUDA >=13.0
 
 ## Installation
 
-> Note: we recommend installing boltz in a fresh python environment
-
-Install boltz with PyPI (recommended):
+> Note: recommended to installing boltz-gb10-spark in a fresh python/conda environment
 
 ```
-pip install boltz[cuda] -U
+git clone https://github.com/sanjyotshenoy/boltz-gb10-spark.git
+cd boltz; chmod +x install.sh; ./install.sh
 ```
 
-or directly from GitHub for daily updates:
+The install script should help install the dependcies which will take care of the errors plaguing the normal installation and standard dependencies of boltz.
+
+# Explanation of how the compatibility issues were resolved
+
+It was a multi-step process to trouble-shoot the problem. When I first ran the standard installation of Boltz-2, 
+the prediction was stuck at Predicting stage
+```
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Predicting: |                                                                                                | 0/? [00:00<?, ?it/s]^C
+``` 
+I was not able to trouble-shoot this issue myself. Thanks to my friend [Ramith Hettiarachchi](https://bsky.app/profile/ramith.fyi) for pointing out a simple fix :- setting `num_workers` to `0`. This moved the prediction script to a new error:
 
 ```
-git clone https://github.com/jwohlwend/boltz.git
-cd boltz; pip install -e .[cuda]
+ImportError: Error importing triangle_multiplicative_update from cuequivariance_ops_torch.
+Predicting DataLoader 0:   0%|          | 0/1 [00:15<?, ?it/s]
 ```
 
-If you are installing on CPU-only or non-CUDA GPus hardware, remove `[cuda]` from the above commands. Note that the CPU version is significantly slower than the GPU version.
+After a bit of searching around, I stumbled upon the official cuEquivariance's GitHub Repository.
+The repository's README gave the fix. Boltz-2's standard `[cuda]` dependencies don't contain `cuequivariance-ops-torch-cu13`, the CUDA 13.0 Kernels for cuEquivariance NVIDIA Python Library.
+This resolved this issue and then I was greeted with a massive error log which gave enough clues as to what the issue was:
+
+```
+[...]
+================================================================
+Internal Triton PTX codegen error
+`ptxas` stderr:
+ptxas fatal   : Value 'sm_121a' is not defined for option 'gpu-name'
+
+[...]
+triton.runtime.errors.PTXASError: PTXAS error: Internal Triton PTX codegen error
+`ptxas` stderr:
+ptxas fatal   : Value 'sm_121a' is not defined for option 'gpu-name'
+```
+
+There were issues with Triton, the python library which converses between Python and CUDA. A solution to this was to install the Triton-Nightly (3.6) which has support for Blackwell Architectures. The idea for this was also inspired by this blog post about [installing OpenFold3 by Adrian Carr](https://www.linkedin.com/posts/adrian-carr-56b99985_github-adrian-greenneuronopenfold3-dgx-spark-activity-7407355321888854016-gNQG) which mentions installation of Triton Nightly builds for Kernel Support.
+
+After uninstalling the standard triton and reinstalling the nightly build, finally the Boltz inference ran! Keeping these bug fixes in mind, I have created this Boltz fork and installation script (`install.sh`) which should allow you to run Boltz inference on a GB10-based NVIDIA DGX Spark. Thanks once again to Ramith Hettiarachchi for testing this installation pipeline.
+
+The rest of this README is verbatim of Boltz's Official GitHub Repository README!
 
 ## Inference
 

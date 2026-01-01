@@ -3,16 +3,16 @@ requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "boltz"
+name = "boltz-gb10-spark"
 version = "2.2.1"
-requires-python = ">=3.10,<3.13"
-description = "Boltz"
+requires-python = ">=3.12,<3.13"
+description = "Boltz-GB10-Spark"
 readme = "README.md"
 dependencies = [
-    "torch>=2.2",
+    "torch>=2.9",
     "numpy>=1.26,<2.0",
     "hydra-core==1.3.2",
-    "pytorch-lightning==2.5.0",
+    "pytorch-lightning==2.5.0.post0", # Pytorch Lightning Checkpoint
     "rdkit>=2024.3.2",
     "dm-tree==0.1.8",
     "requests==2.32.3",
@@ -41,9 +41,9 @@ boltz = "boltz.main:cli"
 lint = ["ruff"]
 test = ["pytest", "requests"]
 cuda = [
-    "cuequivariance_ops_cu12>=0.5.0",
-    "cuequivariance_ops_torch_cu12>=0.5.0",
-    "cuequivariance_torch>=0.5.0",
+    "cuequivariance_torch>=0.8.0",
+    "cuequivariance_ops_cu13>=0.8.0", # cuEquivariance support for CUDA 13.0
+    "cuequivariance_ops_torch_cu13>=0.8.0" # cuEquivariance support for CUDA 13.0
 ]
 
 [tool.ruff]

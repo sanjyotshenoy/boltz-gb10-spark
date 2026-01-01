@@ -908,7 +908,7 @@ def cli() -> None:
     "--num_workers",
     type=int,
     help="The number of dataloader workers to use for prediction. Default is 2.",
-    default=2,
+    default=0,
 )
 @click.option(
     "--override",
@@ -1039,6 +1039,12 @@ def cli() -> None:
     is_flag=True,
     help=" to dump the s and z embeddings into a npz file. Default is False.",
 )
+@click.option(
+    "--matmul_precision",
+    type=click.Choice(["highest", "high", "medium", "low"]),
+    help="Set the matmul precision for float32 operations.",
+    default='medium',
+)
 def predict(  # noqa: C901, PLR0915, PLR0912
     data: str,
     out_dir: str,
@@ -1057,7 +1063,7 @@ def predict(  # noqa: C901, PLR0915, PLR0912
     write_full_pae: bool = False,
     write_full_pde: bool = False,
     output_format: Literal["pdb", "mmcif"] = "mmcif",
-    num_workers: int = 2,
+    num_workers: int = 0,
     override: bool = False,
     seed: Optional[int] = None,
     use_msa_server: bool = False,
@@ -1077,6 +1083,7 @@ def predict(  # noqa: C901, PLR0915, PLR0912
     num_subsampled_msa: int = 1024,
     no_kernels: bool = False,
     write_embeddings: bool = False,
+    matmul_precision: str = 'medium',
 ) -> None:
     """Run predictions with Boltz."""
     # If cpu, write a friendly warning
@@ -1326,6 +1333,7 @@ def predict(  # noqa: C901, PLR0915, PLR0912
         model_module.eval()
 
         # Compute structure predictions
+        torch.set_float32_matmul_precision(matmul_precision) # Gets rid of precision warning during inference
         trainer.predict(
             model_module,
             datamodule=data_module,
@@ -1403,6 +1411,7 @@ def predict(  # noqa: C901, PLR0915, PLR0912
         model_module.eval()
 
         trainer.callbacks[0] = pred_writer
+        torch.set_float32_matmul_precision(matmul_precision) # Gets rid of precision warning during inference
         trainer.predict(
             model_module,
             datamodule=data_module,
