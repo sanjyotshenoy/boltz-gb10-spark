@@ -1,5 +1,6 @@
 <h1 align="center">NVIDIA DGX Spark/GB10-compatible Fork of Boltz</h1>
 <div style="text-align: center;">
+ 
 ![](docs/boltz1_pred_figure.png)
 </div>
 
